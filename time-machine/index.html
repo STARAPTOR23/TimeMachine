@@ -94,13 +94,12 @@
     <div class="idle-state" id="idle-state">
       <p class="idle-text">Choose how you'd like to explore time</p>
 
-      <!-- "Previously searched" history — populated by js/app.js from
-           localStorage. Any year reached via the timeline, decade search,
-           direct entry, a quick-jump chip, or the ±1/±10 nav buttons gets
-           recorded here (deduped), regardless of how it was reached.
-           Hidden entirely until there's at least one entry. -->
+      <!-- "Previously searched:" history — populated by js/app.js from
+           localStorage. Any year/decade reached via the timeline, decade
+           search, direct entry, a quick-jump chip, or the ±1/±10 nav
+           buttons is recorded (deduped). Hidden until there's an entry. -->
       <div class="idle-history" id="idle-history" hidden>
-        <p class="direct-quick-label">Previously searched</p>
+        <p class="direct-quick-label">Previously searched:</p>
         <div class="direct-chip-row" id="history-chip-row"></div>
       </div>
     </div>
@@ -180,10 +179,10 @@
           </div>
         </div>
 
-        <!-- Same "Previously searched" history as the idle state (see
-             #idle-history above) — kept in sync by js/app.js's renderHistory(). -->
+        <!-- Same "Previously searched:" history as the idle state, kept in
+             sync by js/app.js's renderHistory(). -->
         <div class="direct-history" id="direct-history" hidden>
-          <p class="direct-quick-label">Previously searched</p>
+          <p class="direct-quick-label">Previously searched:</p>
           <div class="direct-chip-row" id="history-chip-row-direct"></div>
         </div>
       </div>

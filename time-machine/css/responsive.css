@@ -2,8 +2,9 @@
    TIME CAPSULE — responsive rules
    The timeline already uses clamp()/vw units so it scales reasonably on
    its own. These rules cover the parts that need real adjustment on small
-   screens (drag/swipe still works via pointer events either way). A fuller
-   pass happens once the results page exists and there's more to fit.
+   screens (drag/swipe still works via pointer events either way). Column
+   counts for the expanded-card grid are chosen in js/app.js
+   (expandedColumnCount), not here.
    ========================================================================== */
 
 @media (max-width: 640px) {
@@ -77,10 +78,8 @@
     padding: 90px 18px 40px;
   }
 
-  /* Fixed to stay anchored to the expanded card's actual corner instead of
-     the viewport's — the old values (top:14px) floated the button up near
-     the site header, well above the card itself (which starts at the
-     overlay's 88px top padding, unchanged on mobile). */
+  /* Anchored to the expanded card's actual corner (overlay's 88px top
+     padding), not the viewport's. */
   .card-expanded-close {
     top: 100px;
     right: 14px;

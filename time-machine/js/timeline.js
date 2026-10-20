@@ -217,6 +217,12 @@ window.TimeMachine = window.TimeMachine || {};
 
   function onKeydown(e) {
     if (!track.children.length) return;
+    // Only react while the timeline is actually on screen and the visitor
+    // isn't typing in a field. Without this, pressing Enter in the "Enter a
+    // year" box (or anywhere on the results page) re-fired the timeline's
+    // Enter and jumped to its default year (2026), bypassing validation.
+    if (document.getElementById('timeline-view').hidden) return;
+    if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
     if (e.key === 'ArrowRight') { goToIndex(activeIndex + 1, true); }
     else if (e.key === 'ArrowLeft') { goToIndex(activeIndex - 1, true); }
     else if (e.key === 'Enter') { triggerEnter(); }
@@ -259,12 +265,7 @@ window.TimeMachine = window.TimeMachine || {};
     // Theme, background video, and the enter button are driven off
     // activeIndex + items, both already correct above — set them now,
     // deterministically, rather than only ever waiting on some later
-    // updateVisualState() pass to notice and update them. This is what
-    // actually prevents them getting stuck on a stale value: even if a
-    // leftover async callback (see fonts.ready below) still manages to
-    // fire on a wrong index before layout is ready, it can no longer mask
-    // a legitimate correction, because there's no unfired correction left
-    // to mask — this call already made it.
+    // updateVisualState() pass to notice and update them.
     onActiveChange();
     delete track.dataset.needsInit;
 
@@ -274,16 +275,11 @@ window.TimeMachine = window.TimeMachine || {};
 
     // Wait until .timeline-viewport actually has a real, non-zero width
     // before measuring/positioning anything. .timeline-view was just made
-    // visible (removed its `hidden` attribute) in this same tick, and in
-    // practice a single requestAnimationFrame isn't always enough for the
-    // browser to have committed that layout change — clientWidth can still
-    // read 0 one frame later. If that happens, the centering math targets
-    // the left edge of a "0-width" viewport instead of the real center,
-    // which shoves every item off-screen while all the *bookkeeping*
-    // (active index, theme, button text) stays perfectly self-consistent —
-    // which is exactly why the year/theme could look right while the
-    // timeline itself appeared completely blank. Retrying every frame
-    // until the width is real removes the guesswork entirely.
+    // visible in this same tick, and a single requestAnimationFrame isn't
+    // always enough for the browser to have committed that layout change —
+    // clientWidth can still read 0 one frame later, which shoves every
+    // item off-screen while all the bookkeeping stays self-consistent.
+    // Retrying every frame until the width is real removes the guesswork.
     function positionOnceReady() {
       if (!viewport.clientWidth) {
         requestAnimationFrame(positionOnceReady);
@@ -298,10 +294,8 @@ window.TimeMachine = window.TimeMachine || {};
 
     // Belt-and-suspenders: if the display font ('Anton') is still loading
     // when positionOnceReady ran, items get measured using the fallback
-    // font's (different) widths. Once the real font swaps in, every
-    // item's actual width can shift, which drifts the centering math out
-    // from under the layout we already computed. Re-measuring once fonts
-    // are confirmed loaded corrects for that.
+    // font's (different) widths. Re-measuring once fonts are confirmed
+    // loaded corrects for that.
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(function () {
         measureSpacing();

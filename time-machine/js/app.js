@@ -60,8 +60,7 @@ window.TimeMachine = window.TimeMachine || {};
   };
 
   // gif: the fixed category banner used at the top of the compact card
-  // (results-grid) only — the expanded overlay no longer shows a banner
-  // (see openExpandedCard), so this is unaffected by that change.
+  // (results-grid) only — the expanded overlay no longer shows a banner.
   const CARD_META = {
     events: { title: 'Historical Events', eyebrow: 'What happened', gif: 'assets/images/card-events.gif' },
     culture: { title: 'Music & Culture', eyebrow: 'The sound & style', gif: 'assets/images/card-culture.gif' },
@@ -104,10 +103,9 @@ window.TimeMachine = window.TimeMachine || {};
   // Year mode: exact year match, falling back to any entry from the same
   // decade if the exact year has nothing (capped at `limit`).
   //
-  // Decade mode: walks every year in the decade in order (so results are
-  // chronological across all 10 years, not just a date-sorted top-N
-  // "highlights" pull from the whole decade) and returns everything found —
-  // no cap, since the whole point is showing the full decade.
+  // Decade mode: walks every year in the decade in order (chronological
+  // across all 10 years, not a date-sorted top-N "highlights" pull) and
+  // returns everything found — no cap.
   function getItemsFor(dataset, mode, value, limit) {
     if (mode === 'decade') {
       let matches = [];
@@ -162,12 +160,11 @@ window.TimeMachine = window.TimeMachine || {};
     return d2.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
   }
 
-  // ---------- "Previously searched" history ----------
+  // ---------- "Previously searched:" history ----------
   // Recorded once per unique (mode, value) pair, most-recent-first, in
-  // localStorage — so it survives reloads. recordHistory() is called from
-  // showResults(), which every entry point (timeline, decade grid, direct
-  // entry, quick-jump chips, ±1/±10 nav) already funnels through, so a
-  // year/decade is captured no matter how it was reached.
+  // localStorage. recordHistory() is called from showResults(), which every
+  // entry point (timeline, decade grid, direct entry, quick-jump chips,
+  // ±1/±10 nav) funnels through, so it's captured however it was reached.
   const HISTORY_KEY = 'timeCapsuleHistory';
   const HISTORY_MAX = 14;
 
@@ -182,7 +179,7 @@ window.TimeMachine = window.TimeMachine || {};
   }
 
   function saveHistory(list) {
-    try { localStorage.setItem(HISTORY_KEY, JSON.stringify(list)); } catch (e) { /* storage unavailable — history just won't persist */ }
+    try { localStorage.setItem(HISTORY_KEY, JSON.stringify(list)); } catch (e) { /* storage unavailable */ }
   }
 
   function recordHistory(mode, value, label) {
@@ -192,8 +189,6 @@ window.TimeMachine = window.TimeMachine || {};
     renderHistory();
   }
 
-  // Two chip rows show the same list (idle screen + direct-entry screen) so
-  // history is visible no matter which screen the visitor lands on.
   const historyRowIds = ['history-chip-row', 'history-chip-row-direct'];
   const historySectionIds = ['idle-history', 'direct-history'];
 
@@ -229,11 +224,10 @@ window.TimeMachine = window.TimeMachine || {};
 
   // ---------- drag-to-scroll ----------
   // Manual drag-to-scroll for a panel whose native scrollbar is hidden —
-  // native mouse wheel already scrolls it fine on its own (that's just how
-  // overflow works), this only adds click-and-drag. A gesture that starts
-  // on a real <a> link is left alone entirely so clicks/navigation aren't
-  // disturbed, and a small drag-distance threshold stops a genuine drag
-  // from being mistaken for a click once it's released.
+  // native mouse wheel already scrolls it fine on its own, this only adds
+  // click-and-drag. A gesture that starts on a real <a> link is left alone,
+  // and a small drag-distance threshold stops a genuine drag from being
+  // mistaken for a click once it's released.
   function initDragScroll(el, axis) {
     const vertical = axis === 'vertical';
     function getScroll() { return vertical ? el.scrollTop : el.scrollLeft; }
@@ -274,13 +268,11 @@ window.TimeMachine = window.TimeMachine || {};
   }
 
   // ---------- filling the small grid cards ----------
-  // Note: card banners (the .card-image at the top of each card) are fixed
-  // GIFs set directly in index.html — no longer generated from data, and
-  // unaffected by the expanded-view banner removal below.
+  // Card banners (the .card-image at the top of each card) are fixed GIFs
+  // set directly in index.html.
 
-  // In decade mode, items span all 10 years (see getItemsFor), so a small
-  // year heading is inserted whenever the year changes to keep the list
-  // readable and chronological rather than one long undifferentiated blob.
+  // In decade mode, items span all 10 years, so a small year heading is
+  // inserted whenever the year changes.
   function fillItemsList(listEl, items, mode) {
     listEl.innerHTML = '';
     let lastYear = null;
@@ -318,7 +310,7 @@ window.TimeMachine = window.TimeMachine || {};
   // `imdb` (title-page URL) and `rating` fields from the movie record. The
   // whole badge — logo and star/rating together — is one <a> to the
   // movie's IMDb page. Renders nothing if there's neither a URL nor a
-  // rating; with a rating but no URL it's shown as a non-clickable badge.
+  // rating; with a rating but no URL it's a non-clickable badge.
   function imdbBadgeHTML(m) {
     const url = m.imdb || m.imdb_url || '';
     const raw = m.rating !== undefined ? m.rating : m.imdb_rating;
@@ -392,8 +384,7 @@ window.TimeMachine = window.TimeMachine || {};
   }
 
   // Drag-scroll runs on the same four .card-body panels for the whole
-  // session — only their contents change between selections, not the
-  // elements themselves — so this only needs to happen once.
+  // session — only their contents change between selections.
   const cardBodyScrollers = Array.from(document.querySelectorAll('.card-body')).map(function (el) {
     return initDragScroll(el, 'vertical');
   });
@@ -411,8 +402,7 @@ window.TimeMachine = window.TimeMachine || {};
     const isYear = currentMode === 'year';
     const isDecade = currentMode === 'decade';
 
-    // ±1 only makes sense at year granularity; ±10 works for both (a
-    // decade jump of 10 lands you on the adjacent decade).
+    // ±1 only makes sense at year granularity; ±10 works for both.
     navMinus1.hidden = !isYear;
     navPlus1.hidden = !isYear;
     navMinus10.hidden = !(isYear || isDecade);
@@ -453,9 +443,8 @@ window.TimeMachine = window.TimeMachine || {};
     const themeClass = TimeMachine.getThemeClassForYear(value);
     const era = ERA_INFO[themeClass];
 
-    // Year mode keeps a sane per-card cap (8) since it's one specific year.
-    // Decade mode intentionally has no cap — see getItemsFor/getMoviesFor —
-    // because the whole point is showing the full decade, not a highlight reel.
+    // Year mode keeps a per-card cap (8). Decade mode has no cap — see
+    // getItemsFor/getMoviesFor — it shows the full decade.
     const events = getItemsFor(eventsData, mode, value, 8);
     const culture = getItemsFor(cultureData, mode, value, 8);
     const funFacts = getItemsFor(factsData, mode, value, 8);
@@ -467,11 +456,8 @@ window.TimeMachine = window.TimeMachine || {};
 
     resultsBackdrop.className = 'results-backdrop era-' + themeClass.replace('theme-', '');
     TimeMachine.setBackdropVideo(resultsBackdrop, themeClass);
-    // Also (re)applies body.theme-XXXX — the timeline already does this as
-    // you scroll it, but entries that skip the timeline (typing a year
-    // directly, or a quick-jump chip) otherwise never set it, leaving the
-    // results page's --era-accent-driven colors stuck on whatever the body
-    // last happened to have.
+    // Also (re)applies body.theme-XXXX — entries that skip the timeline
+    // (direct year, quick-jump chip) otherwise never set it.
     TimeMachine.applyBodyTheme(themeClass);
     resultsEyebrow.textContent = era.label;
     resultsTitle.textContent = mode === 'year' ? 'WELCOME TO ' + value : 'EXPLORING THE ' + label.toUpperCase();
@@ -484,9 +470,7 @@ window.TimeMachine = window.TimeMachine || {};
     cardBodyScrollers.forEach(function (s) { s.resetScroll(); });
     updateYearNav();
 
-    // Record this search regardless of how we got here — timeline,
-    // decade grid, direct entry, quick-jump chip, or a ±1/±10 nav click
-    // all funnel through showResults().
+    // Record this search however we got here.
     recordHistory(mode, value, label);
 
     timelineView.hidden = true;
@@ -496,15 +480,9 @@ window.TimeMachine = window.TimeMachine || {};
   }
 
   // ---------- card expand / collapse ----------
-  // Builds the full-screen view from the exact same currentContent used
-  // for the small cards, so nothing is ever defined twice. Each item
-  // (event, movie, culture note, or fun fact) becomes its own card in a
-  // masonry-style grid (CSS multi-column layout) that each card sizes to
-  // its own content — no banner, no fixed horizontal strip.
+  // Builds the full-screen view from the same currentContent used for the
+  // small cards. Each item becomes its own card in a masonry-style grid.
 
-  // Normalizes any of the four content types into a common shape so one
-  // renderer can build cards for all of them. events/culture/facts share
-  // one schema; movies has its own but also carries IMDb fields now.
   function normalizeSubItems(cardType, rawItems) {
     if (cardType === 'movies') {
       return rawItems.map(function (m) {
@@ -530,8 +508,7 @@ window.TimeMachine = window.TimeMachine || {};
       return '<p class="movies-placeholder">Nothing recorded for this period yet.</p>';
     }
     // Movie posters keep their full natural aspect ratio (no crop/cap) —
-    // everything else stays capped at a fixed thumbnail height so the grid
-    // reads as compact tiles rather than full-bleed photos.
+    // everything else stays capped at a fixed thumbnail height.
     const imageClass = cardType === 'movies' ? 'expanded-subcard-image expanded-subcard-image--poster' : 'expanded-subcard-image';
     const cards = items.map(function (it) {
       const imgInner = it.image
@@ -543,8 +520,8 @@ window.TimeMachine = window.TimeMachine || {};
       const metaHtml = it.meta ? '<p class="expanded-subcard-meta">' + escapeHtml(it.meta) + '</p>' : '';
       const yearBadge = it.year ? '<span class="expanded-subcard-year">' + it.year + '</span>' : '';
       const imdbHtml = imdbBadgeHTML(it);
-      // data-link lets clicking anywhere on the card (e.g. the image) open
-      // the same URL as the title link — see the click handler below.
+      // data-link lets clicking anywhere on the card open the same URL as
+      // the title link — see the click handler below.
       const linkAttr = it.link ? ' data-link="' + escapeHtml(it.link) + '"' : '';
       return (
         '<div class="expanded-subcard"' + linkAttr + '>' +
@@ -563,7 +540,7 @@ window.TimeMachine = window.TimeMachine || {};
 
   // Deals the cards out round-robin into N flex columns so they read
   // left-to-right across each row (chronological) instead of filling one
-  // column top-to-bottom first. Column count follows the old breakpoints.
+  // column top-to-bottom first.
   function expandedColumnCount() {
     const w = window.innerWidth;
     if (w <= 640) return 1;
@@ -603,9 +580,7 @@ window.TimeMachine = window.TimeMachine || {};
     const items = normalizeSubItems(cardType, rawItems);
     const gridHtml = subCardsGridHTML(items, cardType);
 
-    // No banner image here (removed — the compact grid's .card-image GIF
-    // already establishes the section, repeating it full-width just pushed
-    // real content down for no benefit). Header sits right at the top now.
+    // No banner image here — header sits right at the top.
     expandedInner.innerHTML =
       '<div class="card-expanded-header">' +
         '<p class="card-expanded-eyebrow">' + meta.eyebrow + '</p>' +
@@ -618,10 +593,9 @@ window.TimeMachine = window.TimeMachine || {};
     if (stripEl) {
       const scroller = initDragScroll(stripEl, 'vertical');
 
-      // Clicking a sub-card (its image, meta text, or padding — anywhere
-      // that isn't the title link or the IMDb badge, which already
-      // navigate on their own) opens the same URL. Suppressed after a
-      // genuine drag so scrolling the grid doesn't accidentally open a tab.
+      // Clicking a sub-card anywhere that isn't a link (title or IMDb
+      // badge navigate on their own) opens the same URL. Suppressed after
+      // a genuine drag so scrolling doesn't accidentally open a tab.
       stripEl.addEventListener('click', function (e) {
         if (e.target.closest('a')) return;
         if (scroller.wasDragging()) return;
@@ -641,8 +615,7 @@ window.TimeMachine = window.TimeMachine || {};
 
   resultsGrid.addEventListener('click', function (e) {
     const card = e.target.closest('.result-card');
-    // Let clicks on real links (event/movie titles) navigate normally
-    // instead of opening the expanded overlay.
+    // Let clicks on real links navigate normally instead of opening the overlay.
     if (card && !e.target.closest('a')) openExpandedCard(card.dataset.cardType);
   });
 
@@ -688,9 +661,8 @@ window.TimeMachine = window.TimeMachine || {};
     tvTransition.hidden = true;
     tvTransition.classList.remove('playing');
     specialErrorScreen.hidden = true;
-    // The expanded card overlay sits above everything (z-index 40) and was
-    // staying open when a mode tab was clicked from underneath it — close
-    // it explicitly so switching modes always shows the mode you picked.
+    // The expanded overlay sits above everything — close it so switching
+    // modes always shows the mode you picked.
     if (!expandedOverlay.hidden) closeExpandedCard();
 
     if (mode === 'direct') {
@@ -739,9 +711,7 @@ window.TimeMachine = window.TimeMachine || {};
 
   // ---------- direct year entry ----------
 
-  // Only digits, capped at 4 characters, enforced live as you type —
-  // maxlength alone doesn't stop pasted letters, and type="number" inputs
-  // have their own quirks (e/E, scientific notation, no real maxlength).
+  // Only digits, capped at 4 characters, enforced live as you type.
   directInput.addEventListener('input', function () {
     directInput.value = directInput.value.replace(/\D/g, '').slice(0, 4);
   });
