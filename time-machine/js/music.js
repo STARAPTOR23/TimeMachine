@@ -65,8 +65,8 @@ window.TimeMachineMusic.SECTIONS = {
     folder: 'assets/audio/1960s/',
     tracks: [
       // { title: 'Track Name', artist: 'Artist Name', src: 'assets/audio/1960s/track-name.mp3' },
-      { title: 'Booker T. & the M.G.', artist: 'Booker T. & the M.G.s', src: 'assets/audio/1960s/Green Onions.mp3' },
       { title: 'Telstar', artist: 'The Tornados', src: 'assets/audio/1960s/The Tornados - Telstar.mp3' },
+      { title: 'Booker T. & the M.G.', artist: 'Booker T. & the M.G.s', src: 'assets/audio/1960s/Green Onions.mp3' },
       { title: 'Apache', artist: 'The Shadows', src: 'assets/audio/1960s/The Shadows - Apache.mp3' }
     ]
   },
